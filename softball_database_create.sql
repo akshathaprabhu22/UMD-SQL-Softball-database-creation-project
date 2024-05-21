@@ -1,0 +1,163 @@
+USE BUDT703_Project_0507_09 
+
+-- DROP STATEMENTS
+DROP TABLE IF EXISTS [BUDT703_Project_0507_09.Play];
+
+DROP TABLE IF EXISTS [BUDT703_Project_0507_09.Has];
+
+DROP TABLE IF EXISTS [BUDT703_Project_0507_09.Opponent];
+
+DROP TABLE IF EXISTS [BUDT703_Project_0507_09.Location];
+
+DROP TABLE IF EXISTS [BUDT703_Project_0507_09.Game];
+
+DROP TABLE IF EXISTS [BUDT703_Project_0507_09.Season];
+
+DROP TABLE IF EXISTS [BUDT703_Project_0507_09.Player];
+
+--- CREATE STATEMENTS
+-- Player Table
+CREATE TABLE [BUDT703_Project_0507_09.Player](
+
+plyId CHAR(7) NOT NULL,
+
+plyFirstName VARCHAR(20) ,
+
+plyLastName VARCHAR (20),
+
+plyAVG DECIMAL(3,2),
+
+plyR INT,
+
+plyH INT,
+
+plyRBI INT,
+
+CONSTRAINT pk_Player_plyId PRIMARY KEY (plyId)
+
+);
+
+-- Season Table
+CREATE TABLE [BUDT703_Project_0507_09.Season](
+
+ssnId CHAR(4) NOT NULL,
+
+ssnHomeWins INTEGER ,
+
+ssnHomeLosses INTEGER ,
+
+ssnAwayWins INTEGER ,
+
+ssnAwayLosses INTEGER ,
+
+ssnNeutralWins INTEGER ,
+
+ssnNeutralLosses INTEGER ,
+
+CONSTRAINT pk_Season_ssnId PRIMARY KEY (ssnId)
+
+);
+
+
+-- Game Table
+CREATE TABLE [BUDT703_Project_0507_09.Game](
+
+gamId VARCHAR(10) NOT NULL,
+
+gamDate DATE,
+
+gameResult CHAR (1) ,
+
+gamScore VARCHAR(6) ,
+
+ssnId CHAR (4) NOT NULL,
+
+CONSTRAINT pk_Game_gamId PRIMARY KEY (gamId),
+
+CONSTRAINT fk_Game_ssnId FOREIGN KEY (ssnId)
+
+REFERENCES [BUDT703_Project_0507_09.Season] (ssnId)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+-- Location Table
+CREATE TABLE [BUDT703_Project_0507_09.Location](
+
+locId CHAR(2) NOT NULL,
+
+locCity VARCHAR(30) ,
+
+locState VARCHAR(30) ,
+
+CONSTRAINT pk_Location_locId PRIMARY KEY (locId)
+
+);
+
+-- Opponent Table
+CREATE TABLE [BUDT703_Project_0507_09.Opponent](
+
+oppId CHAR(3) NOT NULL,
+
+oppName VARCHAR(30) ,
+
+CONSTRAINT pk_Opponent_oppId PRIMARY KEY (oppId)
+
+);
+
+-- Has Relation
+CREATE TABLE [BUDT703_Project_0507_09.Has](
+
+oppId CHAR(3) NOT NULL,
+
+gamId VARCHAR(10) NOT NULL,
+
+locId CHAR(2) NOT NULL,
+
+CONSTRAINT pk_Has_oppId_gamId_locId PRIMARY KEY (oppId,gamId, locId),
+
+CONSTRAINT fk_Has_oppId FOREIGN KEY (oppId)
+
+REFERENCES [BUDT703_Project_0507_09.Opponent] (oppId)
+
+ON DELETE NO ACTION ON UPDATE CASCADE,
+
+CONSTRAINT fk_Has_gamId FOREIGN KEY (gamId)
+
+REFERENCES [BUDT703_Project_0507_09.Game]  (gamId)
+
+ON DELETE NO ACTION ON UPDATE CASCADE,
+
+CONSTRAINT fk_Has_locId FOREIGN KEY (locId)
+
+REFERENCES [BUDT703_Project_0507_09.Location] (locId)
+
+ON DELETE NO ACTION ON UPDATE CASCADE
+
+);
+
+-- Play Relation
+CREATE TABLE [BUDT703_Project_0507_09.Play](
+
+plyId CHAR(7) NOT NULL,
+
+ssnId CHAR(4) NOT NULL,
+
+CONSTRAINT pk_Play_plyId_ssnId PRIMARY KEY (plyId, ssnId),
+
+CONSTRAINT fk_Play_plyId FOREIGN KEY (plyId)
+
+REFERENCES [BUDT703_Project_0507_09.Player] (plyId)
+
+ON DELETE NO ACTION ON UPDATE CASCADE,
+
+CONSTRAINT fk_Play_ssnId FOREIGN KEY (ssnId)
+
+REFERENCES [BUDT703_Project_0507_09.Season] (ssnId)
+
+ON DELETE NO ACTION ON UPDATE CASCADE
+
+
+);
+
